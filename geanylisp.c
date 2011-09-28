@@ -57,6 +57,7 @@ static GtkWidget *macroexpand_menu_item = NULL;
 static GtkWidget *eval_menu_item = NULL;
 static VteTerminal *vte = NULL;
 static gboolean have_vte = FALSE;
+static GeanyDocument *doc = NULL;
 
 //Functions
 static void show_error_message(void);
@@ -72,10 +73,21 @@ enum{
    };
 PLUGIN_KEY_GROUP(lisp_shortcuts, KB_COUNT)
 
+static void insert_string(GeanyDocument *doc, const gchar *string)
+{
+	if (doc != NULL)
+	{
+		gint pos = sci_get_current_position(doc->editor->sci);
+		sci_insert_text(doc->editor->sci, pos, string);
+	}
+}
+
 static void eval_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
     {
+		doc = document_get_current();
+		insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
         dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
         vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
     }
@@ -89,6 +101,8 @@ static void macroexpand_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 {
 	if (have_vte)
     {
+		doc = document_get_current();
+		insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
         dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to macroexpand-1.");
         vte_terminal_feed_child(vte, "echo '(macroexpand-1 <<<expression here>)'\n", strlen("echo '(macroexpand-1 <<<expression here>)'\n"));
     }
