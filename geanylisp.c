@@ -87,9 +87,21 @@ static void eval_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 	if (have_vte)
     {
 		doc = document_get_current();
-		insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-        dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
-        vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+		gint pos = sci_get_current_position(doc->editor->sci);
+		if (pos > 0) pos--;
+		gchar letter = sci_get_char_at(doc->editor->sci, pos);
+		//dialogs_show_msgbox(GTK_MESSAGE_INFO, letter);
+		
+		switch (letter)
+		{ 
+			case ')': dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
+						break;
+			default:  dialogs_show_msgbox(GTK_MESSAGE_INFO, "Some other character found.");
+			break;
+		}
+		//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
+        //dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
+        //vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
     }
 	else
 	{
@@ -102,9 +114,22 @@ static void macroexpand_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 	if (have_vte)
     {
 		doc = document_get_current();
-		insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-        dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to macroexpand-1.");
-        vte_terminal_feed_child(vte, "echo '(macroexpand-1 <<<expression here>)'\n", strlen("echo '(macroexpand-1 <<<expression here>)'\n"));
+		gint pos = sci_get_current_position(doc->editor->sci);
+		if (pos > 0) pos--;
+		gchar letter = sci_get_char_at(doc->editor->sci, pos);
+		//dialogs_show_msgbox(GTK_MESSAGE_INFO, letter);
+		
+		switch (letter)
+		{ 
+			case ')': dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
+						break;
+			default:  dialogs_show_msgbox(GTK_MESSAGE_INFO, "Some other character found.");
+					break;
+		}
+
+		//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
+        //dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to macroexpand-1.");
+        //vte_terminal_feed_child(vte, "echo '(macroexpand-1 <<<expression here>)'\n", strlen("echo '(macroexpand-1 <<<expression here>)'\n"));
     }
 	else
 	{
