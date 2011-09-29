@@ -21,7 +21,12 @@
 
 #include "geanylispedit.h"
 
-/* Locates the widget that contains the virtual terminal(VTE) */
+/** 
+ * This function locates the message window notebook widget and calls
+ * set_vte() to search for the VTE terminal from the widget.
+ *   
+ * @see set_vte()
+ **/
 static void init_vte(void)
 {
     GtkNotebook *nb;
@@ -35,6 +40,17 @@ static void init_vte(void)
 		set_vte(vte_frame);
 }
 
+/** 
+ * This callback function is invoked when the 'LispEdit: eval' menu option is selected.
+ * If the cursor is placed after a closing parenthesis the function will look for the matching
+ * opening parenthesis. If there is no matching parenthesis it will display a warning dialog box.
+ *  
+ * If the closing parenthesis has a matching opening parenthesis, all the characters between the parentheses
+ * including the parentheses are sent to the child process running in the VTE.
+ * 
+ * @param menuitem GtkMenuItem.
+ * @param gdata gpointer.
+ **/
 static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
@@ -68,7 +84,18 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 	}	
 }
 
-static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
+/**
+ * This callback function is invoked when the 'LispEdit: macroexpand-1' menu option is selected.
+ * If the cursor is placed after a closing parenthesis the function will look for the matching
+ * opening parenthesis. If there is no matching parenthesis it will display a warning dialog box.
+ *  
+ * If the closing parenthesis has a matching opening parenthesis, the function will send
+ * (macroexpand-1 '__PARENTHESIS_&_CONTENTS_GO_HERE__) to the child process running in the VTE.
+ * 
+ * @param menuitem GtkMenuItem.
+ * @param gdata gpointer.
+ **/
+static void cb_macroexpand_1(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
     {
@@ -99,8 +126,13 @@ static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 	}
 }
 
-/* Callback functions for the keyboard shortcuts */
-
+/** 
+ * This callback function is invoked when the shorcut keys Shift + Ctrl + Enter are pressed.
+ * The function invokes the cb_eval() function.
+ *   
+ * @param key_id guint.
+ * @see cb_eval()
+ **/
 static void on_eval_key(G_GNUC_UNUSED guint key_id)
 {  
    // sanity check
@@ -111,20 +143,35 @@ static void on_eval_key(G_GNUC_UNUSED guint key_id)
    cb_eval(NULL, NULL);
 }
 
-static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
+/** 
+ * This callback function is invoked when the shorcut keys Shift + Alt + Enter are pressed.
+ * The function invokes the cb_macroexpand() function.
+ *   
+ * @param key_id guint.
+ * @see cb_macroexpand()
+ **/
+static void on_macroexpand_1_key(G_GNUC_UNUSED guint key_id)
 { 
    // sanity check
    if (document_get_current() == NULL){
        return;
        }
    
-   cb_macroexpand(NULL, NULL);
+   cb_macroexpand_1(NULL, NULL);
 } 
 
-/* The Geany plugin initialization function. This is called automatically by Geany when a user installs the plugin. */
+/** 
+ * The Geany plugin initialization function. This is called automatically by Geany when a user installs the plugin.
+ *   
+ * @param data GeanyData.
+ **/
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
+	//Get hold of the Edit menu widget.
 	GtkWidget* parent_menu = ui_lookup_widget(GTK_WIDGET(geany->main_widgets->window), "edit1_menu");//"tools1_menu"
+	
+	// Create the 'LispEdit: eval' menu, assign it to the callback function cb_eval
+	// and attach it to parent_menu.
 	eval_menu_item = gtk_menu_item_new_with_mnemonic(EVAL_MENU_STR);
 	gtk_widget_show(eval_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),							
@@ -132,20 +179,22 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 	g_signal_connect(eval_menu_item, "activate",
 		G_CALLBACK(cb_eval), NULL);
    
-	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(MACROEXPAND_MENU_STR);
-	gtk_widget_show(macroexpand_menu_item);
+    // Create the 'LispEdit: macroexpand-1' menu, assign it to the callback function cb_macroexpand_1
+	// and attach it to parent_menu.
+	macroexpand_1_menu_item = gtk_menu_item_new_with_mnemonic(MACROEXPAND_MENU_STR);
+	gtk_widget_show(macroexpand_1_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),
-		macroexpand_menu_item);
-	g_signal_connect(macroexpand_menu_item, "activate",
-		G_CALLBACK(cb_macroexpand), NULL);
+		macroexpand_1_menu_item);
+	g_signal_connect(macroexpand_1_menu_item, "activate",
+		G_CALLBACK(cb_macroexpand_1), NULL);
 
 	/* make sure our menu items aren't called when there is no doc open */
 	ui_add_document_sensitive(eval_menu_item);
-	ui_add_document_sensitive(macroexpand_menu_item);
+	ui_add_document_sensitive(macroexpand_1_menu_item);
 
-	// setup keybindings
-	keybindings_set_item(plugin_key_group, KB_MACROEXPAND, on_macroexpand_key,
-		GDK_Return, MACROEXPAND_KEY_SEQ, MACROEXPAND_ID_STR, MACROEXPAND_MENU_STR, macroexpand_menu_item);
+	// setup keybindings for the callback functions.
+	keybindings_set_item(plugin_key_group, KB_MACROEXPAND, on_macroexpand_1_key,
+		GDK_Return, MACROEXPAND_KEY_SEQ, MACROEXPAND_ID_STR, MACROEXPAND_MENU_STR, macroexpand_1_menu_item);
 	keybindings_set_item(plugin_key_group, KB_EVAL, on_eval_key,
 		GDK_Return, EVAL_KEY_SEQ, EVAL_ID_STR, EVAL_MENU_STR, eval_menu_item);
 	
@@ -154,12 +203,22 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 
 }
 
+/** 
+ *  The Geany plugin cleanup function. This is called automatically by Geany when a user uninstalls the plugin. 
+ **/
 void plugin_cleanup(void)
 {
-   gtk_widget_destroy(macroexpand_menu_item);
+   gtk_widget_destroy(macroexpand_1_menu_item);
    gtk_widget_destroy(eval_menu_item);
 }
 
+/** 
+ * This function searches for the VTE terminal from the widget and sets 
+ * it to the variable VteTerminal *vte.
+ *   
+ * @param widget GtkWidget.
+ * @see init_vte()
+ **/
 
 static void set_vte(GtkWidget *widget)
 {
@@ -181,13 +240,16 @@ static void set_vte(GtkWidget *widget)
     }
 }
 
-/* This function displays an error function when the user attempts to sent commands to a Lisp process running in the terminal
- * if no terminal exists. */
+/** 
+ * This function displays an error function when the user attempts to send
+ * commands to a Lisp process running in the terminal if no terminal exists.
+ *   
+ **/
 static void show_error_message(void)
 {
     GtkWidget *dlg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
                         GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s %s",
-                        PLUGIN_NAME, _("Plugin"));
+                        _("Plugin"), PLUGIN_NAME);
     
     gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dlg), "%s",
         _("There is currently no terminal loaded in Geany. Enable the terminal "

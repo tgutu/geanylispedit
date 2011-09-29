@@ -18,8 +18,8 @@
  *  MA 02110-1301, USA.
  */
 
-#ifndef GEANYLISPEDIT_H
-#define GEANYLISPEDIT_H
+#ifndef __GEANYLISPEDIT_H__
+#define __GEANYLISPEDIT_H__
 
 #include <vte/vte.h>
 #include <geanyplugin.h>
@@ -28,9 +28,9 @@
 
 //Plugin description macros.
 #define PLUGIN_NAME 				_("LispEdit")
-#define PLUGIN_DESCRIPTION			_("A Geany plugin that provides shorcuts for sending commands to a Common Lisp process.")
+#define PLUGIN_DESCRIPTION			_("A Geany plugin that provides shorcuts for sending commands to a Common Lisp process running in the embedded VTE terminal.")
 
-PLUGIN_VERSION_CHECK(130);
+PLUGIN_VERSION_CHECK(201);
 PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
 
 /* Macro definitions for values required by the plugin.
@@ -50,7 +50,7 @@ GeanyData       *geany_data;
 GeanyFunctions  *geany_functions;
 
 //Variables used by the plugin.
-static GtkWidget *macroexpand_menu_item = NULL;
+static GtkWidget *macroexpand_1_menu_item = NULL;
 static GtkWidget *eval_menu_item = NULL;
 static VteTerminal *vte = NULL;
 static gboolean have_vte = FALSE;
@@ -64,9 +64,9 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data);
 
 //Callback functions used by the plugin
 static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata);
-static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata);
+static void cb_macroexpand_1(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata);
 static void on_eval_key(G_GNUC_UNUSED guint key_id);
-static void on_macroexpand_key(G_GNUC_UNUSED guint key_id);
+static void on_macroexpand_1_key(G_GNUC_UNUSED guint key_id);
 
 //Functions
 static void init_vte(void);
