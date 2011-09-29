@@ -62,8 +62,13 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 		
 		switch (letter)
 		{ 
-			case ')':	dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
-						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
+			case ')':	start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
+						
+						if (start_pos < 0)
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
+						else
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found a closing brace with a matching opening brace.");
+							
 						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
 						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
 						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
@@ -90,8 +95,13 @@ static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 		
 		switch (letter)
 		{ 
-			case ')':	dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
-						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
+			case ')':	start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
+						
+						if (start_pos < 0)
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
+						else
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found a closing brace with a matching opening brace.");
+						
 						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
 						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
 						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
@@ -133,14 +143,14 @@ static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
 	GtkWidget* parent_menu = geany->main_widgets->tools_menu;
-	eval_menu_item = gtk_menu_item_new_with_mnemonic(_("Lisp eval"));
+	eval_menu_item = gtk_menu_item_new_with_mnemonic(_("LispEdit: eval"));
 	gtk_widget_show(eval_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),							
 		eval_menu_item);
 	g_signal_connect(eval_menu_item, "activate",
 		G_CALLBACK(cb_eval), NULL);
    
-	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(_("Lisp macroexpand-1"));
+	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(_("LispEdit: macroexpand-1"));
 	gtk_widget_show(macroexpand_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),
 		macroexpand_menu_item);
@@ -153,9 +163,9 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 
 	// setup keybindings 
 	keybindings_set_item(plugin_key_group, KB_MACROEXPAND, on_macroexpand_key,
-		GDK_Return, MACROEXPAND_KEY_SEQ, "lisp_macroexpand_1", _("Lisp macroexpand-1"), macroexpand_menu_item);
+		GDK_Return, MACROEXPAND_KEY_SEQ, "lisp_macroexpand_1", _("LispEdit: macroexpand-1"), macroexpand_menu_item);
 	keybindings_set_item(plugin_key_group, KB_EVAL, on_eval_key,
-		GDK_Return, EVAL_KEY_SEQ, "lisp_eval", _("Lisp eval"), eval_menu_item);
+		GDK_Return, EVAL_KEY_SEQ, "lisp_eval", _("LispEdit: eval"), eval_menu_item);
 	
 	//Initialiase the binding to the Geany virtual terminal (VTE).
 	init_vte();
