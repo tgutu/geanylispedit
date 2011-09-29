@@ -45,12 +45,6 @@ static void insert_string(GeanyDocument *doc, const gchar *string)
 	}
 }
 
-/*
- * Refer to plugindata.h and geanyfunctions.h sci_get_text_range
- * http://www.cs.bu.edu/teaching/cpp/string/array-vs-ptr/
- * 
- */
- 
 static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
@@ -62,20 +56,22 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 		
 		switch (letter)
 		{ 
-			case ')':	start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
-						
+			case ')':	
+						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
 						if (start_pos < 0)
+						{
 							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
-						else
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found a closing brace with a matching opening brace.");
-							
-						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
-						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+						}
+						else if (start_pos >= 0)
+						{
+							sci_get_text_range(doc->editor->sci, start_pos, ++end_pos, cmd_string);
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, cmd_string);
+							//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
+							//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
+							//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+						}
 						break;
 						
-			default:  dialogs_show_msgbox(GTK_MESSAGE_INFO, "Some other character found.");
-			break;
 		}
     }
 	else
@@ -91,7 +87,7 @@ static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 		doc = document_get_current();
 		end_pos = sci_get_current_position(doc->editor->sci);
 		if (end_pos > 0) end_pos--;
-		gchar letter = sci_get_char_at(doc->editor->sci, end_pos);
+		gchar letter = sci_get_char_at(doc->editor->sci, end_pos );
 		
 		switch (letter)
 		{ 
@@ -100,15 +96,14 @@ static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 						if (start_pos < 0)
 							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
 						else
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found a closing brace with a matching opening brace.");
-						
-						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
-						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
-						break;
-						
-			default:	dialogs_show_msgbox(GTK_MESSAGE_INFO, "Some other character found.");
-						break;
+						{
+							sci_get_text_range(doc->editor->sci, start_pos, ++end_pos, cmd_string);
+							dialogs_show_msgbox(GTK_MESSAGE_INFO, cmd_string);
+							//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
+							//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
+							//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+						}
+						break;						
 		}
     }
 	else
@@ -143,14 +138,14 @@ static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
 	GtkWidget* parent_menu = geany->main_widgets->tools_menu;
-	eval_menu_item = gtk_menu_item_new_with_mnemonic(_("LispEdit: eval"));
+	eval_menu_item = gtk_menu_item_new_with_mnemonic(EVAL_MENU_STR);
 	gtk_widget_show(eval_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),							
 		eval_menu_item);
 	g_signal_connect(eval_menu_item, "activate",
 		G_CALLBACK(cb_eval), NULL);
    
-	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(_("LispEdit: macroexpand-1"));
+	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(MACROEXPAND_MENU_STR);
 	gtk_widget_show(macroexpand_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),
 		macroexpand_menu_item);
@@ -161,11 +156,11 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 	ui_add_document_sensitive(eval_menu_item);
 	ui_add_document_sensitive(macroexpand_menu_item);
 
-	// setup keybindings 
+	// setup keybindings
 	keybindings_set_item(plugin_key_group, KB_MACROEXPAND, on_macroexpand_key,
-		GDK_Return, MACROEXPAND_KEY_SEQ, "lisp_macroexpand_1", _("LispEdit: macroexpand-1"), macroexpand_menu_item);
+		GDK_Return, MACROEXPAND_KEY_SEQ, MACROEXPAND_ID_STR, MACROEXPAND_MENU_STR, macroexpand_menu_item);
 	keybindings_set_item(plugin_key_group, KB_EVAL, on_eval_key,
-		GDK_Return, EVAL_KEY_SEQ, "lisp_eval", _("LispEdit: eval"), eval_menu_item);
+		GDK_Return, EVAL_KEY_SEQ, EVAL_ID_STR, EVAL_MENU_STR, eval_menu_item);
 	
 	//Initialiase the binding to the Geany virtual terminal (VTE).
 	init_vte();

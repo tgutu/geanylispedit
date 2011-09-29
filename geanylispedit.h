@@ -37,14 +37,22 @@
 #include <glib/gprintf.h>
 */
 
-//Macros
+//Plugin description macros.
 #define PLUGIN_NAME 				_("LispEdit")
 #define PLUGIN_DESCRIPTION			_("A Geany plugin that provides shorcuts for sending commands to a Common Lisp process.")
-#define EVAL_KEY_SEQ				(GDK_CONTROL_MASK | GDK_SHIFT_MASK) //The eval function will be triggered by    Shift + Ctrl + Enter
-#define MACROEXPAND_KEY_SEQ			(1 << 3 | GDK_SHIFT_MASK)    //macroexpand callback will be triggered by Shift + Alt + Enter
 
 PLUGIN_VERSION_CHECK(130);
 PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
+
+/* Macro definitions for values required by the plugin.
+ * The macros define the strings displayed on the menu and the identifier name for the menu entry.*/
+#define EVAL_ID_STR					"lisp_eval"
+#define MACROEXPAND_ID_STR			"lisp_macroexpand_1"
+#define EVAL_MENU_STR				_("LispEdit: macroexpand-1")
+#define MACROEXPAND_MENU_STR		_("LispEdit: eval")
+#define EVAL_KEY_SEQ				(GDK_CONTROL_MASK | GDK_SHIFT_MASK) //The eval function will be triggered by    Shift + Ctrl + Enter
+#define MACROEXPAND_KEY_SEQ			(1 << 3 | GDK_SHIFT_MASK)    //macroexpand callback will be triggered by Shift + Alt + Enter
+#define MAX_CMD_LENGTH				1024	//The maximum characters that can be captured in a string.
 
 //Variables required by Geany
 GeanyPlugin     *geany_plugin;
@@ -58,7 +66,7 @@ static VteTerminal *vte = NULL;
 static gboolean have_vte = FALSE;
 static GeanyDocument *doc = NULL;
 static gint start_pos, end_pos;
-
+gchar cmd_string[MAX_CMD_LENGTH];
 
 //Functions required by Geany
 void plugin_cleanup(void);
@@ -75,7 +83,6 @@ static void init_vte();
 static void insert_string(GeanyDocument *doc, const gchar *string);
 static void show_error_message(void);
 static void set_vte(GtkWidget *widget);
-
 
 // Keybinding(s) 
 enum{
