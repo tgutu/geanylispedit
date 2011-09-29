@@ -26,16 +26,13 @@
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 
-//Plugin description macros.
 #define PLUGIN_NAME 				_("LispEdit")
 #define PLUGIN_DESCRIPTION			_("A Geany plugin that provides shorcuts for sending commands to a Common Lisp process running in the embedded VTE terminal.")
 
-PLUGIN_VERSION_CHECK(201);
-PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
-
 /* Macro definitions for values required by the plugin.
  * The macros define the strings displayed on the menu and the identifier name for the menu entry.
- * The keyboard shorcut keys for invoking the plugin callback functions are also defined.*/
+ * The keyboard shorcut keys for invoking the plugin callback functions are also defined.
+ * */
 #define EVAL_ID_STR					"lisp_eval"
 #define MACROEXPAND_ID_STR			"lisp_macroexpand_1"
 #define EVAL_MENU_STR				_("LispEdit: eval")
@@ -43,11 +40,6 @@ PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
 #define EVAL_KEY_SEQ				(GDK_CONTROL_MASK | GDK_SHIFT_MASK) //The eval function will be triggered by    Shift + Ctrl + Enter
 #define MACROEXPAND_KEY_SEQ			(1 << 3 | GDK_SHIFT_MASK)    //macroexpand callback will be triggered by Shift + Alt + Enter
 #define MAX_CMD_LENGTH				4096	//The maximum characters that can be captured in a string.
-
-//Variables required by Geany
-GeanyPlugin     *geany_plugin;
-GeanyData       *geany_data;
-GeanyFunctions  *geany_functions;
 
 //Variables used by the plugin.
 static GtkWidget *macroexpand_1_menu_item = NULL;
@@ -79,8 +71,5 @@ enum{
    KB_MACROEXPAND,
    KB_COUNT
    };
-
-//Set the keybinding group.
-PLUGIN_KEY_GROUP(lispedit_shortcuts, KB_COUNT)
-
+   
 #endif

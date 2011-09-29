@@ -21,10 +21,22 @@
 
 #include "geanylispedit.h"
 
-/** 
+//Variables required by Geany
+GeanyPlugin     *geany_plugin;
+GeanyData       *geany_data;
+GeanyFunctions  *geany_functions;
+
+PLUGIN_VERSION_CHECK(201);
+PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
+PLUGIN_KEY_GROUP(lispedit_shortcuts, KB_COUNT)//Set the keybinding group.
+
+/**
+ * name: init_vte
+ * 
  * This function locates the message window notebook widget and calls
  * set_vte() to search for the VTE terminal from the widget.
- *   
+ * 
+ * @return void
  * @see set_vte()
  **/
 static void init_vte(void)
@@ -41,6 +53,8 @@ static void init_vte(void)
 }
 
 /** 
+ * name: cb_eval
+ * 
  * This callback function is invoked when the 'LispEdit: eval' menu option is selected.
  * If the cursor is placed after a closing parenthesis the function will look for the matching
  * opening parenthesis. If there is no matching parenthesis it will display a warning dialog box.
@@ -50,6 +64,7 @@ static void init_vte(void)
  * 
  * @param menuitem GtkMenuItem.
  * @param gdata gpointer.
+ * @return void
  **/
 static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
@@ -85,6 +100,8 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 }
 
 /**
+ * name: cb_macroexpand_1
+ * 
  * This callback function is invoked when the 'LispEdit: macroexpand-1' menu option is selected.
  * If the cursor is placed after a closing parenthesis the function will look for the matching
  * opening parenthesis. If there is no matching parenthesis it will display a warning dialog box.
@@ -94,6 +111,7 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
  * 
  * @param menuitem GtkMenuItem.
  * @param gdata gpointer.
+ * @return void
  **/
 static void cb_macroexpand_1(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
@@ -126,11 +144,14 @@ static void cb_macroexpand_1(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED 
 	}
 }
 
-/** 
+/**
+ * name: on_eval_key
+ *  
  * This callback function is invoked when the shorcut keys Shift + Ctrl + Enter are pressed.
  * The function invokes the cb_eval() function.
  *   
  * @param key_id guint.
+ * @return void
  * @see cb_eval()
  **/
 static void on_eval_key(G_GNUC_UNUSED guint key_id)
@@ -143,11 +164,14 @@ static void on_eval_key(G_GNUC_UNUSED guint key_id)
    cb_eval(NULL, NULL);
 }
 
-/** 
+/**
+ * name: on_macroexpand_1_key
+ * 
  * This callback function is invoked when the shorcut keys Shift + Alt + Enter are pressed.
  * The function invokes the cb_macroexpand() function.
  *   
  * @param key_id guint.
+ * @return void
  * @see cb_macroexpand()
  **/
 static void on_macroexpand_1_key(G_GNUC_UNUSED guint key_id)
@@ -161,9 +185,12 @@ static void on_macroexpand_1_key(G_GNUC_UNUSED guint key_id)
 } 
 
 /** 
+ * name: plugin_init
+ * 
  * The Geany plugin initialization function. This is called automatically by Geany when a user installs the plugin.
  *   
  * @param data GeanyData.
+ * @return void
  **/
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
@@ -204,7 +231,11 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 }
 
 /** 
- *  The Geany plugin cleanup function. This is called automatically by Geany when a user uninstalls the plugin. 
+ * name: plugin_cleanup
+ * 
+ * The Geany plugin cleanup function. This is called automatically by Geany when a user uninstalls the plugin.
+ * 
+ * @return void 
  **/
 void plugin_cleanup(void)
 {
@@ -213,10 +244,13 @@ void plugin_cleanup(void)
 }
 
 /** 
+ * name: set_vte
+ * 
  * This function searches for the VTE terminal from the widget and sets 
  * it to the variable VteTerminal *vte.
  *   
  * @param widget GtkWidget.
+ * @return void
  * @see init_vte()
  **/
 
@@ -241,9 +275,12 @@ static void set_vte(GtkWidget *widget)
 }
 
 /** 
+ * name: show_error_message
+ * 
  * This function displays an error function when the user attempts to send
  * commands to a Lisp process running in the terminal if no terminal exists.
- *   
+ * 
+ * @return void
  **/
 static void show_error_message(void)
 {
