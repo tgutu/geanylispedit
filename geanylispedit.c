@@ -22,7 +22,7 @@
 #include "geanylispedit.h"
 
 /* Locates the widget that contains the virtual terminal(VTE) */
-static void init_vte()
+static void init_vte(void)
 {
     GtkNotebook *nb;
     GtkWidget *vte_frame = NULL;
@@ -33,16 +33,6 @@ static void init_vte()
     //If the frame contains the vte, go get the VTE and set it to GtkWidget *vte
     if (vte_frame != NULL)
 		set_vte(vte_frame);
-}
-
-
-static void insert_string(GeanyDocument *doc, const gchar *string)
-{
-	if (doc != NULL)
-	{
-		gint pos = sci_get_current_position(doc->editor->sci);
-		sci_insert_text(doc->editor->sci, pos, string);
-	}
 }
 
 static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
@@ -60,18 +50,16 @@ static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
 						if (start_pos < 0)
 						{
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
+							dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Found an isolated closing brace!!!");
 						}
 						else if (start_pos >= 0)
 						{
 							sci_get_text_range(doc->editor->sci, start_pos, ++end_pos, cmd_string);
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, cmd_string);
-							//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-							//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
-							//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+							vte_terminal_feed_child(vte, "\n", strlen("\n"));
+							vte_terminal_feed_child(vte, cmd_string, strlen(cmd_string));
+							vte_terminal_feed_child(vte, "\n", strlen("\n"));
 						}
-						break;
-						
+						break;						
 		}
     }
 	else
@@ -94,16 +82,15 @@ static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 			case ')':	start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
 						
 						if (start_pos < 0)
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, "Found an isolated closing brace.");
+							dialogs_show_msgbox(GTK_MESSAGE_WARNING, "Found an isolated closing brace!!!");
 						else
 						{
 							sci_get_text_range(doc->editor->sci, start_pos, ++end_pos, cmd_string);
-							dialogs_show_msgbox(GTK_MESSAGE_INFO, cmd_string);
-							//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
-							//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
-							//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
+							vte_terminal_feed_child(vte, "\n(macroexpand-1 '", strlen("\n(macroexpand-1 '"));
+							vte_terminal_feed_child(vte, cmd_string, strlen(cmd_string));
+							vte_terminal_feed_child(vte, ")\n", strlen(")\n"));
 						}
-						break;						
+						break;
 		}
     }
 	else
@@ -137,7 +124,7 @@ static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
 /* The Geany plugin initialization function. This is called automatically by Geany when a user installs the plugin. */
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
-	GtkWidget* parent_menu = geany->main_widgets->tools_menu;
+	GtkWidget* parent_menu = ui_lookup_widget(GTK_WIDGET(geany->main_widgets->window), "edit1_menu");//"tools1_menu"
 	eval_menu_item = gtk_menu_item_new_with_mnemonic(EVAL_MENU_STR);
 	gtk_widget_show(eval_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),							
@@ -209,4 +196,5 @@ static void show_error_message(void)
     
     gtk_dialog_run(GTK_DIALOG(dlg));
     gtk_widget_destroy(dlg);
+    g_free(cmd_string);
 }

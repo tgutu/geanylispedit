@@ -24,18 +24,7 @@
 #include <vte/vte.h>
 #include <geanyplugin.h>
 #include <gdk/gdkkeysyms.h>
-
-/*
-#include "geany.h"
-#include "support.h"
-#include "ui_utils.h"
-#include "document.h"
-#include "keybindings.h"
-#include "plugindata.h"
-#include "geanyfunctions.h"
-#include <glib.h>
-#include <glib/gprintf.h>
-*/
+#include <string.h>
 
 //Plugin description macros.
 #define PLUGIN_NAME 				_("LispEdit")
@@ -45,14 +34,15 @@ PLUGIN_VERSION_CHECK(130);
 PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
 
 /* Macro definitions for values required by the plugin.
- * The macros define the strings displayed on the menu and the identifier name for the menu entry.*/
+ * The macros define the strings displayed on the menu and the identifier name for the menu entry.
+ * The keyboard shorcut keys for invoking the plugin callback functions are also defined.*/
 #define EVAL_ID_STR					"lisp_eval"
 #define MACROEXPAND_ID_STR			"lisp_macroexpand_1"
-#define EVAL_MENU_STR				_("LispEdit: macroexpand-1")
-#define MACROEXPAND_MENU_STR		_("LispEdit: eval")
+#define EVAL_MENU_STR				_("LispEdit: eval")
+#define MACROEXPAND_MENU_STR		_("LispEdit: macroexpand-1")
 #define EVAL_KEY_SEQ				(GDK_CONTROL_MASK | GDK_SHIFT_MASK) //The eval function will be triggered by    Shift + Ctrl + Enter
 #define MACROEXPAND_KEY_SEQ			(1 << 3 | GDK_SHIFT_MASK)    //macroexpand callback will be triggered by Shift + Alt + Enter
-#define MAX_CMD_LENGTH				1024	//The maximum characters that can be captured in a string.
+#define MAX_CMD_LENGTH				4096	//The maximum characters that can be captured in a string.
 
 //Variables required by Geany
 GeanyPlugin     *geany_plugin;
@@ -79,8 +69,7 @@ static void on_eval_key(G_GNUC_UNUSED guint key_id);
 static void on_macroexpand_key(G_GNUC_UNUSED guint key_id);
 
 //Functions
-static void init_vte();
-static void insert_string(GeanyDocument *doc, const gchar *string);
+static void init_vte(void);
 static void show_error_message(void);
 static void set_vte(GtkWidget *widget);
 
