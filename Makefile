@@ -1,17 +1,17 @@
-all: geanylisp.so
+all: geanylispedit.so
 	
-geanylisp.so: geanylisp.o
-	gcc geanylisp.o -o geanylisp.so -shared `pkg-config --libs geany` 
+geanylispedit.so: geanylispedit.o
+	gcc geanylispedit.o -o geanylispedit.so -shared `pkg-config --libs geany` 
 
-geanylisp.o: geanylisp.c
-	gcc -c geanylisp.c -fPIC `pkg-config --cflags geany`
+geanylispedit.o: geanylispedit.c
+	gcc -c geanylispedit.c -fPIC `pkg-config --cflags geany`
 
 clean:
 	rm -rf *.o *.so
 	
-install: geanylisp.so
-	sudo cp geanylisp.so /usr/lib/geany/geanylisp.so
+install: geanylispedit.so
+	sudo cp geanylispedit.so /usr/lib/geany/geanylispedit.so
 	
 uninstall:
-	sudo rm /usr/lib/geany/geanylisp.so
+	sudo rm /usr/lib/geany/geanylispedit.so
 	
