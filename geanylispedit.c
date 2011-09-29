@@ -1,6 +1,6 @@
-/*  shiftcolumn.c - a Geany plugin
+/*  geanylispedit.c - a Geany plugin
  *
- *  Copyright 2009 Andrew L Janke <a.janke@gmail.com>
+ *  Copyright 2011 Tapiwa Gutu
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,60 +18,23 @@
  *  MA 02110-1301, USA.
  */
 
-#include <vte/vte.h>
-#include <geanyplugin.h>
-#include <gdk/gdkkeysyms.h>
 
-/*
-#include "geany.h"
-#include "support.h"
+#include "geanylispedit.h"
 
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
+/* Locates the widget that contains the virtual terminal(VTE) */
+static void init_vte()
+{
+    GtkNotebook *nb;
+    GtkWidget *vte_frame = NULL;
+    
+    nb = GTK_NOTEBOOK(geany_data->main_widgets->message_window_notebook);
+    vte_frame = gtk_notebook_get_nth_page(nb, MSG_VTE);
+    
+    //If the frame contains the vte, go get the VTE and set it to GtkWidget *vte
+    if (vte_frame != NULL)
+		set_vte(vte_frame);
+}
 
-#include "ui_utils.h"
-
-#include "document.h"
-#include "keybindings.h"
-#include "plugindata.h"
-#include "geanyfunctions.h"
-
-#include <glib.h>
-#include <glib/gprintf.h>*/
-
-//Macros
-#define EVAL_KEY_SEQ (GDK_CONTROL_MASK | GDK_SHIFT_MASK) //The eval function will be triggered by    Shift + Ctrl + Enter
-#define MACROEXPAND_KEY_SEQ (1 << 3 | GDK_SHIFT_MASK)    //macroexpand callback will be triggered by Shift + Alt + Enter
-#define PLUGIN_NAME _("LispEdit")
-#define PLUGIN_DESCRIPTION  _("A Geany plugin that provides shorcuts for sending commands to a Common Lisp process.")
-
-PLUGIN_VERSION_CHECK(130);
-PLUGIN_SET_INFO(PLUGIN_NAME, PLUGIN_DESCRIPTION, "1.0", "Tapiwa Gutu");
-
-//Variables
-GeanyPlugin     *geany_plugin;
-GeanyData       *geany_data;
-GeanyFunctions  *geany_functions;
-static GtkWidget *macroexpand_menu_item = NULL;
-static GtkWidget *eval_menu_item = NULL;
-static VteTerminal *vte = NULL;
-static gboolean have_vte = FALSE;
-static GeanyDocument *doc = NULL;
-static gint start_pos, end_pos;
-//Functions
-static void show_error_message(void);
-static void set_vte(GtkWidget *widget);
-static void init_vte();
-
-
-// Keybinding(s) 
-enum{
-   KB_EVAL,
-   KB_MACROEXPAND,
-   KB_COUNT
-   };
-PLUGIN_KEY_GROUP(lisp_shortcuts, KB_COUNT)
 
 static void insert_string(GeanyDocument *doc, const gchar *string)
 {
@@ -88,19 +51,19 @@ static void insert_string(GeanyDocument *doc, const gchar *string)
  * 
  */
  
-static void eval_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
+static void cb_eval(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
     {
 		doc = document_get_current();
-		start_pos = sci_get_current_position(doc->editor->sci);
-		if (start_pos > 0) start_pos--;
-		gchar letter = sci_get_char_at(doc->editor->sci, start_pos);
+		end_pos = sci_get_current_position(doc->editor->sci);
+		if (end_pos > 0) end_pos--;
+		gchar letter = sci_get_char_at(doc->editor->sci, end_pos);
 		
 		switch (letter)
 		{ 
 			case ')':	dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
-						end_pos = sci_find_matching_brace(doc->editor->sci, start_pos);
+						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
 						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
 						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
 						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
@@ -116,19 +79,19 @@ static void eval_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer 
 	}	
 }
 
-static void macroexpand_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
+static void cb_macroexpand(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gpointer gdata)
 {
 	if (have_vte)
     {
 		doc = document_get_current();
-		start_pos = sci_get_current_position(doc->editor->sci);
-		if (start_pos > 0) start_pos--;
-		gchar letter = sci_get_char_at(doc->editor->sci, start_pos);
+		end_pos = sci_get_current_position(doc->editor->sci);
+		if (end_pos > 0) end_pos--;
+		gchar letter = sci_get_char_at(doc->editor->sci, end_pos);
 		
 		switch (letter)
 		{ 
 			case ')':	dialogs_show_msgbox(GTK_MESSAGE_INFO, "Closing brace found!");
-						end_pos = sci_find_matching_brace(doc->editor->sci, start_pos);
+						start_pos = sci_find_matching_brace(doc->editor->sci, end_pos);
 						//insert_string(doc, "<<<<<<<<<I AM HERE>>>>>>>>>>>");
 						//dialogs_show_msgbox(GTK_MESSAGE_INFO, "Sending expression to eval-1.");
 						//vte_terminal_feed_child(vte, "ls\n", strlen("ls\n"));
@@ -144,6 +107,7 @@ static void macroexpand_cb(G_GNUC_UNUSED GtkMenuItem *menuitem, G_GNUC_UNUSED gp
 	}
 }
 
+/* Callback functions for the keyboard shortcuts */
 
 static void on_eval_key(G_GNUC_UNUSED guint key_id)
 {  
@@ -152,7 +116,7 @@ static void on_eval_key(G_GNUC_UNUSED guint key_id)
        return;
        }
    
-   eval_cb(NULL, NULL);
+   cb_eval(NULL, NULL);
 }
 
 static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
@@ -162,9 +126,10 @@ static void on_macroexpand_key(G_GNUC_UNUSED guint key_id)
        return;
        }
    
-   macroexpand_cb(NULL, NULL);
+   cb_macroexpand(NULL, NULL);
 } 
 
+/* The Geany plugin initialization function. This is called automatically by Geany when a user installs the plugin. */
 void plugin_init(G_GNUC_UNUSED GeanyData *data)
 {
 	GtkWidget* parent_menu = geany->main_widgets->tools_menu;
@@ -173,14 +138,14 @@ void plugin_init(G_GNUC_UNUSED GeanyData *data)
 	gtk_container_add(GTK_CONTAINER(parent_menu),							
 		eval_menu_item);
 	g_signal_connect(eval_menu_item, "activate",
-		G_CALLBACK(eval_cb), NULL);
+		G_CALLBACK(cb_eval), NULL);
    
 	macroexpand_menu_item = gtk_menu_item_new_with_mnemonic(_("Lisp macroexpand-1"));
 	gtk_widget_show(macroexpand_menu_item);
 	gtk_container_add(GTK_CONTAINER(parent_menu),
 		macroexpand_menu_item);
 	g_signal_connect(macroexpand_menu_item, "activate",
-		G_CALLBACK(macroexpand_cb), NULL);
+		G_CALLBACK(cb_macroexpand), NULL);
 
 	/* make sure our menu items aren't called when there is no doc open */
 	ui_add_document_sensitive(eval_menu_item);
@@ -203,21 +168,6 @@ void plugin_cleanup(void)
    gtk_widget_destroy(eval_menu_item);
 }
 
-/* for when the vte cannot be located */
-static void show_error_message(void)
-{
-    GtkWidget *dlg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
-                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s %s",
-                        PLUGIN_NAME, _("Plugin"));
-    
-    gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dlg), "%s",
-        _("There is currently no terminal loaded in Geany. Enable the terminal "
-        "in Geany's prefrences dialog and restart Geany to use the plugin "
-        "or disable the plugin to stop seeing this error message."));
-    
-    gtk_dialog_run(GTK_DIALOG(dlg));
-    gtk_widget_destroy(dlg);
-}
 
 static void set_vte(GtkWidget *widget)
 {
@@ -239,16 +189,19 @@ static void set_vte(GtkWidget *widget)
     }
 }
 
-/* locate vte anywhere at or below widget */
-static void init_vte()
+/* This function displays an error function when the user attempts to sent commands to a Lisp process running in the terminal
+ * if no terminal exists. */
+static void show_error_message(void)
 {
-    GtkNotebook *nb;
-    GtkWidget *vte_frame = NULL;
+    GtkWidget *dlg = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s %s",
+                        PLUGIN_NAME, _("Plugin"));
     
-    nb = GTK_NOTEBOOK(geany_data->main_widgets->message_window_notebook);
-    vte_frame = gtk_notebook_get_nth_page(nb, MSG_VTE);
+    gtk_message_dialog_format_secondary_markup(GTK_MESSAGE_DIALOG(dlg), "%s",
+        _("There is currently no terminal loaded in Geany. Enable the terminal "
+        "in Geany's prefrences dialog and restart Geany to use the plugin "
+        "or disable the plugin to stop seeing this error message."));
     
-    //If the frame contains the vte, go get the VTE and set it to GtkWidget *vte
-    if (vte_frame != NULL)
-		set_vte(vte_frame);
+    gtk_dialog_run(GTK_DIALOG(dlg));
+    gtk_widget_destroy(dlg);
 }
