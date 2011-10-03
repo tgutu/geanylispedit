@@ -1,0 +1,86 @@
+commit c840c603ed6c5328572dcc63dc7497bba26a2981
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 10:07:05 2011 +0200
+
+    Restructured the directory. Separated the source files from the installation binaries.
+
+commit df75c5987c180af3189c17676787cbc83a180978
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 09:51:34 2011 +0200
+
+    Edited the README file.
+
+commit 044901ae580ac59f10b35e04c5f616b264f0f09f
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 09:38:48 2011 +0200
+
+    Add the following files:
+    						1) changelog => 'Contains the revision history. Useful for those who do not have the entire repository and thus cannot inspect changes.'
+    						2) TODO => 'A list of changes that I need to make in future revisions.'
+    						3) README => 'A description of the repositry.'
+
+commit d1f19a3b1d45c40481fae96243ca958607876b11
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 13:57:47 2011 +0200
+
+    Updated function documentation.
+
+commit a8f3d35176d53c4bf56027dc372e122ab74aa10f
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 13:35:09 2011 +0200
+
+    Added documentation to all the functions in geanylispedit.c and replaced all instances of the word macroexpand to macroexpand_1 as to avoid future conflict between functions and variables for the macroexpand-1 and macroexpand special forms.
+
+commit 247142467df74782e41e4631dc859ae2a4467359
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 12:35:22 2011 +0200
+
+    The plugin can now send the characters enclosed by matching parathensis to a process running in the VTE.
+
+commit 27f6e4ad633a7cf2de8264d683565c3de12b7017
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 10:56:58 2011 +0200
+
+    The plugin can now capture the text between two matching braces.
+
+commit 4ffe738c6cd79b30b233fa3268bed568d6b5e80a
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 09:40:41 2011 +0200
+
+    The plugin can now correctly identify matching closing braces and an isolated closing brace.
+
+commit ffe508ae1afe24318fa990177e4d8726d5189c11
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 09:26:18 2011 +0200
+
+    Separated the geanylispedit.c file into geanylispedit.c and geanylispedit.h. It will be easier to maintain the code if the definitions are separated from the implementation details.
+
+commit a326b06f2b9dc349e466058e1352cef7b86f7f89
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Thu Sep 29 08:54:57 2011 +0200
+
+    Renamed all geanylisp.* files to geanylispedit.*
+
+commit d670e895594dcb208526b0db5461986632c3232c
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Wed Sep 28 16:20:07 2011 +0200
+
+    The plugin can now detect the character just before the cursor!
+
+commit 005adccd4727087ed359069abca4365d37937393
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Wed Sep 28 15:35:24 2011 +0200
+
+    The plugin can insert a string of text into the document.
+
+commit 97a86120faf03266df34f530337345b0aaac8903
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Wed Sep 28 15:10:45 2011 +0200
+
+    Added the debian package for Geany 0.20.
+
+commit 1677c0bf9086a15acc14842094a2e3e39070e3d0
+Author: Tapiwa Gutu <marco@Thousand-Sunny.(none)>
+Date:   Wed Sep 28 15:09:15 2011 +0200
+
+    This version of the LispEdit plugin has full support for shortcut keys and can send commands to the terminal.
