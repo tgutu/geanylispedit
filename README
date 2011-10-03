@@ -1,4 +1,0 @@
-Geany LispEdit
-
-LispEdit is a Geany (see www.geany.org) plugin module for feeding s-expressions (symbolic expressions)
-to a Lisp process running in the virtual terminal (VTE) embedded in Geany.
