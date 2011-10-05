@@ -1,7 +1,7 @@
 1. [DONE] Reorganise the directory structure separating source files from the compiled module and installation script.
-2. Create downloadable archive containing the compiled module and source files.
-3. Write a separate installation script and remove the 'make install' directive. Or maybe not?
+2. [DONE] Create downloadable archive containing the compiled module and source files.
+3. [DONE] Write a separate installation script and remove the 'make install' directive. Or maybe not?
 4. The plugin currently searches for the VTE terminal in only one location. This is not desirable as people can move the VTE to a sidepane instead.
 5. Write up proper documentation for how to use the plugin to interact with a Lisp process.
 6. Write up documentation on library dependencies before compiling the plugin.
-7. Change the GPL license to a BSD style license to allow people to basically do whatever they want with it.
+7. [DONE] Change the GPL license to a BSD style license to allow people to basically do whatever they want with it.
