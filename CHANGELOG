@@ -1,3 +1,15 @@
+commit 23a34b35cb2368c73a923e9e223bab9ab95bce14
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Wed Oct 5 12:59:23 2011 +0200
+
+    Removed the install/Geany directory. Figured people should just do an internet search for the most recent Geany version.
+
+commit 4fb1a21073b08f4de144103d03e565993e309b68
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Wed Oct 5 11:50:40 2011 +0200
+
+    Updated the CHANGELOG and recreated the archive inorder to include the new file versions.
+
 commit bd292361d760e73acfa9bf915eba930527bd1fe8
 Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
 Date:   Wed Oct 5 11:35:23 2011 +0200
