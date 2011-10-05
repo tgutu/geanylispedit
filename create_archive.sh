@@ -1,1 +1,1 @@
-tar --exclude=geanylispedit.tar.gz --exclude=src/geanylispedit.*o -czf geanylispedit.tar.gz *
+tar --exclude=geanylispedit.tar.gz --exclude=HOWTO --exclude=src/geanylispedit.*o -czf geanylispedit.tar.gz *

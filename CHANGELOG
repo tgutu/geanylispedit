@@ -1,3 +1,71 @@
+commit bd292361d760e73acfa9bf915eba930527bd1fe8
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Wed Oct 5 11:35:23 2011 +0200
+
+    Completed writing the HOWTO - LispEdit document which describes how to download the plugin, install it and use it.
+
+commit 5b9a3fdf02e05013b0f1a76700fda41f802eb80e
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Wed Oct 5 09:25:41 2011 +0200
+
+    Changed the GPL license to a BSD license because I want people to be free to make modifications without any obligations to
+    reveal their code though hopefully they will be gracious enough to do so.
+    
+    Improved the description of the plugin in the README file and the description text displayed by Geany.
+
+commit 1b945432cfdc40667ad5e47390760bff6a81fe8a
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 16:39:26 2011 +0300
+
+    Fixed typo on Readme.
+
+commit 525919ee67c64ed5406fd1e08a22e5657102706f
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 14:26:09 2011 +0200
+
+    Added .gitignore file.
+
+commit 069618348a6455b34e6f9ab0e73ff397418bfe84
+Merge: f277644 063c59d
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 11:07:03 2011 +0200
+
+    Merge branch 'master' of github.com:tgutu/geanylispedit
+    
+    Conflicts:
+    	README
+
+commit f2776441455c26c9098f2aa04ba4e2fdd69edfd0
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 11:02:59 2011 +0200
+
+    Fixed merge conflict
+
+commit 063c59d89fb1275eac4785d80b70d6e24d2e19f1
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 11:59:11 2011 +0300
+
+    Edited README via GitHub
+
+commit ada116a41df853294601d5a6a77daa41de166cf9
+Merge: 7d4cd1f 1ec0114
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 10:54:58 2011 +0200
+
+    Merge branch 'master' of github.com:tgutu/geanylispedit
+
+commit 7d4cd1f6c7ec17da4efa9e2dfdf7e90dbc56843c
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 10:43:32 2011 +0200
+
+    Wrote a script to automatically compress all the files required for installation into the archive geanylispedit.tar.gz while excluding all the compilation statge files produced in the src folder.
+
+commit 1ec0114632a3f0c5f319f936fe93fd9588ef6431
+Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
+Date:   Mon Oct 3 10:43:32 2011 +0200
+
+    Wrote a script to automatically compress all the files required for installation into the archive geanylispedit.tar.gz while excluding all the compilation statge files produced in the src folder.
+
 commit c840c603ed6c5328572dcc63dc7497bba26a2981
 Author: Tapiwa Gutu <tapiwa.gutu@gmail.com>
 Date:   Mon Oct 3 10:07:05 2011 +0200
